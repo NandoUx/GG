@@ -48,12 +48,21 @@ def handle_reels(message):
         url = message.text
         bot.reply_to(message, "🔍 Sedang mendownload Reels...")
         
+        # Mendapatkan media_pk dari URL
+        media_pk = cl.media_pk_from_url(url)
+        
+        # Mendapatkan informasi media, termasuk caption
+        media_info = cl.media_info(media_pk)
+        
+        # Mengambil caption dari media
+        caption = media_info.caption_text if media_info.caption_text else "📥 Via Telegram Bot"
+        
         # Download Reels
-        video_path = cl.video_download(cl.media_pk_from_url(url))
+        video_path = cl.video_download(media_pk)
         
         # Upload ke IG
         bot.reply_to(message, "📤 Mengupload ke Instagram...")
-        cl.clip_upload(video_path, caption="iyaww🫠. #relatable #fyp")
+        cl.clip_upload(video_path, caption=caption)
         
         # Menghapus file setelah upload
         if os.path.exists(video_path):
