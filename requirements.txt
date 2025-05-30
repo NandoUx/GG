@@ -1,3 +1,4 @@
 telebot
 instagrapi
 python-dotenv
+Pillow
