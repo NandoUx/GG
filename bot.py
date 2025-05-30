@@ -55,7 +55,12 @@ def handle_reels(message):
         bot.reply_to(message, "📤 Mengupload ke Instagram...")
         cl.clip_upload(video_path, caption="iyaww🫠. #relatable #fyp")
         
-        bot.reply_to(message, "✅ Berhasil di-repost ke IG!")
+        # Menghapus file setelah upload
+        if os.path.exists(video_path):
+            os.remove(video_path)
+            print(f"[+] File {video_path} berhasil dihapus setelah diupload.")
+        
+        bot.reply_to(message, "✅ Berhasil di-repost ke IG dan file dihapus!")
     except Exception as e:
         bot.reply_to(message, f"❌ Gagal: {e}")
 
