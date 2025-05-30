@@ -3,6 +3,12 @@ import telebot
 from instagrapi import Client
 from instagrapi.exceptions import LoginRequired
 
+if os.path.exists("session.json"):
+    cl.load_settings("session.json")
+else:
+    cl.login(IG_USERNAME, IG_PASSWORD)
+    cl.dump_settings("session.json")
+
 # Config
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Simpan di Railway Variables
 IG_USERNAME = os.getenv("IG_USERNAME")        # Username IG lo
