@@ -53,7 +53,7 @@ def handle_reels(message):
         
         # Upload ke IG
         bot.reply_to(message, "📤 Mengupload ke Instagram...")
-        cl.clip_upload(video_path, caption="iyaww🫠.")
+        cl.clip_upload(video_path, caption="iyaww🫠. #relatable #fyp")
         
         bot.reply_to(message, "✅ Berhasil di-repost ke IG!")
     except Exception as e:
