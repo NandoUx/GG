@@ -2,3 +2,4 @@ telebot
 instagrapi
 python-dotenv
 Pillow
+moviepy
