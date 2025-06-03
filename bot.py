@@ -8,7 +8,7 @@ import pickle
 
 API_TOKEN = '8087733216:AAEfD9NVuiP1S8SK0OMM9QzXbW9mLbuYRUU'
 IG_USERNAME = 'numb.audiooo'
-IG_PASSWORD = 'NandoGG77'
+IG_PASSWORD = 'NandoGG77@'
 
 bot = telebot.TeleBot(API_TOKEN)
 L = instaloader.Instaloader()
