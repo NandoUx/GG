@@ -4,11 +4,14 @@ import yt_dlp
 import os
 import time
 import pickle
+from dotenv import load_dotenv
 
+# Load env variables from .env file
+load_dotenv()
 
-API_TOKEN = '8087733216:AAEfD9NVuiP1S8SK0OMM9QzXbW9mLbuYRUU'
-IG_USERNAME = 'numb.audiooo'
-IG_PASSWORD = 'NandoPixel2025'
+API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')
+IG_USERNAME = os.getenv('IG_USERNAME')
+IG_PASSWORD = os.getenv('IG_PASSWORD')
 
 bot = telebot.TeleBot(API_TOKEN)
 L = instaloader.Instaloader()
@@ -30,7 +33,6 @@ def load_session():
 def instagram_login():
     try:
         if load_session():
-            # Test session by trying to get profile
             profile = instaloader.Profile.from_username(L.context, IG_USERNAME)
             print(f"Session valid for {profile.username}")
         else:
@@ -50,7 +52,6 @@ def download_instagram_reel(url):
         video_url = post.video_url
         filename = f"{shortcode}.mp4"
 
-        # Download video via requests
         import requests
         r = requests.get(video_url, stream=True)
         with open(filename, 'wb') as f:
@@ -98,10 +99,8 @@ def handle_link(message):
         bot.reply_to(message, f"Downloaded video!\nCaption:\n{caption}\nUploading in 30 seconds to simulate safe repost...")
         time.sleep(30)
 
-        # Placeholder for upload logic
         bot.reply_to(message, "Pretending to upload video to Instagram Reels now... (this part is a stub)")
 
-        # Clean up downloaded video
         if os.path.exists(filename):
             os.remove(filename)
     else:
