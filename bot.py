@@ -5,9 +5,10 @@ import os
 import time
 import pickle
 
-API_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
-IG_USERNAME = 'your_instagram_username'
-IG_PASSWORD = 'your_instagram_password'
+
+API_TOKEN = '8087733216:AAEfD9NVuiP1S8SK0OMM9QzXbW9mLbuYRUU'
+IG_USERNAME = 'numb.audiooo'
+IG_PASSWORD = 'NandoGG77'
 
 bot = telebot.TeleBot(API_TOKEN)
 L = instaloader.Instaloader()
