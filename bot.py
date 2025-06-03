@@ -1,23 +1,31 @@
 import os
 import telebot
 import re
+import uuid
+from reposter import process_tiktok_link
 
 API_TOKEN = os.getenv("API_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
 
-# Respond to /start
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Send me a TikTok link and I'll repost it (soon™).")
+ACCOUNTS = ["account1", "account2"]  # Replace with your real account cookie names
 
-# Detect TikTok links in messages
-@bot.message_handler(func=lambda m: re.search(r'(https?://)?(www\.)?tiktok\.com/', m.text))
-def handle_tiktok_link(message):
-    tiktok_url = re.search(r'(https?://[^\s]+)', message.text)
-    if tiktok_url:
-        bot.reply_to(message, f"📥 Got it! Preparing to repost: {tiktok_url.group(0)}")
-        # Here you would put your repost logic — right now it's just confirming it works.
+@bot.message_handler(commands=['start'])
+def welcome(msg):
+    bot.reply_to(msg, "👋 Send me a TikTok link to repost.")
+
+@bot.message_handler(func=lambda m: re.search(r'(https?://[^\s]+)', m.text))
+def handle_link(msg):
+    url = re.search(r'(https?://[^\s]+)', msg.text).group(0)
+    bot.reply_to(msg, f"📥 Downloading TikTok: {url}")
+    
+    selected_account = ACCOUNTS[hash(url) % len(ACCOUNTS)]
+    temp_name = f"video_{uuid.uuid4().hex[:6]}.mp4"
+
+    success, caption = process_tiktok_link(url, temp_name, selected_account)
+    
+    if success:
+        bot.reply_to(msg, f"✅ Reposted from {selected_account}\n🧹 Cleaning up...")
     else:
-        bot.reply_to(message, "Hmm... that doesn't look like a valid TikTok URL.")
+        bot.reply_to(msg, "❌ Failed to repost. Maybe TikTok changed something.")
 
 bot.polling()
