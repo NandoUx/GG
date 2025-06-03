@@ -1,31 +1,50 @@
 import os
-import telebot
 import re
-import uuid
-from reposter import process_tiktok_link
+import telebot
+from dotenv import load_dotenv
+from tiktok_downloader import download_tiktok_video, extract_caption
+from instagram_bot import InstagramBot
 
-API_TOKEN = os.getenv("API_TOKEN")
-bot = telebot.TeleBot(API_TOKEN)
+load_dotenv()
 
-ACCOUNTS = ["account1", "account2"]  # Replace with your real account cookie names
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+IG_USERNAME = os.getenv("INSTAGRAM_USERNAME")
+IG_PASSWORD = os.getenv("INSTAGRAM_PASSWORD")
+
+bot = telebot.TeleBot(BOT_TOKEN)
+ig_bot = InstagramBot(IG_USERNAME, IG_PASSWORD)
 
 @bot.message_handler(commands=['start'])
-def welcome(msg):
-    bot.reply_to(msg, "👋 Send me a TikTok link to repost.")
+def send_welcome(message):
+    bot.reply_to(message, "Send me a TikTok link to repost as Instagram Reel.")
 
 @bot.message_handler(func=lambda m: re.search(r'(https?://[^\s]+)', m.text))
-def handle_link(msg):
-    url = re.search(r'(https?://[^\s]+)', msg.text).group(0)
-    bot.reply_to(msg, f"📥 Downloading TikTok: {url}")
-    
-    selected_account = ACCOUNTS[hash(url) % len(ACCOUNTS)]
-    temp_name = f"video_{uuid.uuid4().hex[:6]}.mp4"
+def handle_tiktok_link(message):
+    url = re.search(r'(https?://[^\s]+)', message.text).group(0)
+    bot.reply_to(message, f"⏳ Downloading TikTok video...")
 
-    success, caption = process_tiktok_link(url, temp_name, selected_account)
-    
-    if success:
-        bot.reply_to(msg, f"✅ Reposted from {selected_account}\n🧹 Cleaning up...")
+    video_path = "temp_video.mp4"
+    success = download_tiktok_video(url, video_path)
+    if not success:
+        bot.reply_to(message, "❌ Failed to download the TikTok video.")
+        return
+
+    caption = extract_caption(url) or ""
+
+    bot.reply_to(message, "📤 Uploading to Instagram Reels...")
+    login_success = ig_bot.login()
+    if not login_success:
+        bot.reply_to(message, "❌ Failed to login to Instagram.")
+        return
+
+    upload_success = ig_bot.upload_reel(video_path, caption)
+    if upload_success:
+        bot.reply_to(message, "✅ Successfully reposted as Instagram Reel!")
     else:
-        bot.reply_to(msg, "❌ Failed to repost. Maybe TikTok changed something.")
+        bot.reply_to(message, "❌ Failed to upload video to Instagram.")
 
-bot.polling()
+    if os.path.exists(video_path):
+        os.remove(video_path)
+
+if __name__ == '__main__':
+    bot.infinity_polling()
