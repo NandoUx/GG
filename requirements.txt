@@ -1,4 +1,4 @@
-pyTelegramBotAPI
-yt-dlp
-playwright
-python-dotenv
+pyTelegramBotAPI==4.12.0
+instaloader==4.9.9
+yt-dlp==2025.05.01
+requests==2.31.0
