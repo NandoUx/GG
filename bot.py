@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Load env variables from .env file
 load_dotenv()
 
-API_TOKEN = os.getenv('TELEGRAM_API_TOKEN')
+API_TOKEN = os.getenv('TELEGRAM_TOKEN')
 IG_USERNAME = os.getenv('IG_USERNAME')
 IG_PASSWORD = os.getenv('IG_PASSWORD')
 
